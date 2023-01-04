@@ -8,7 +8,6 @@ import Header from './components/header'
 function App() {
     return (
         <div>
-            <Header/>
             <Routes>
             <Route path="/login" element={
                     <>
@@ -17,11 +16,13 @@ function App() {
                 } />
                 <Route path="/checkout" element={
                     <>
+                        <Header/>
                         <Checkout/>
                     </>
                 } />
                 <Route path="/" element={
                     <>
+                        <Header/>
                         <Home/>
                     </>
                 } />
