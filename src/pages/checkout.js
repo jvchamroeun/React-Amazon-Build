@@ -5,7 +5,7 @@ import CheckoutProduct from "../components/checkoutProduct"
 import { useStateValue } from '../StateProvider'
 
 function Checkout() {
-  const [{ basket }, dispatch] = useStateValue();
+  const [{ basket, user}, dispatch] = useStateValue();
 
   return (
     <div className='checkout'>
@@ -15,6 +15,7 @@ function Checkout() {
                 src='https://blog.hubspot.com/hubfs/How%20to%20Explain%20Banner%20Ads%20to%20Anyone-2.png'
             />
             <div>
+                <h3>Hello, {user?.email}</h3>
                 <h2 className='checkout_title'>
                     Shopping Basket
                 </h2>
