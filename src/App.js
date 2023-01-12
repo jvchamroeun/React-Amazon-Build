@@ -4,6 +4,7 @@ import Home from './pages/home'
 import Checkout from './pages/checkout'
 import Login from './pages/login'
 import Header from './components/header'
+import Payment from './pages/payment'
 import React, { useEffect } from 'react';
 import { auth } from './firebase';
 import { useStateValue } from './StateProvider';
@@ -32,9 +33,15 @@ function App() {
     return (
         <div>
             <Routes>
-            <Route path="/login" element={
+                <Route path="/login" element={
+                        <>
+                            <Login />
+                        </>
+                    } />
+                <Route path="/payment" element={
                     <>
-                        <Login />
+                        <Header/>
+                        <Payment/>
                     </>
                 } />
                 <Route path="/checkout" element={
