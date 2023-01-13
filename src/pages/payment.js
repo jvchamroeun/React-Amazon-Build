@@ -7,11 +7,12 @@ import { getBasketTotal } from '../reducer';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from '../axios';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import { db } from '../firebase';
 
 function Payment() {
   const navigate = useNavigate();
   const [{ basket, user}, dispatch] = useStateValue();
-  const [error, setError] = useStateValue(null);
+  const [errors, setErrors] = useStateValue(null);
   const [succeeded, setSucceeded] = useState(false);
   const [disabled, setDisabled] = useStateValue(true);
   const [processing, setProcessing] = useState("");
@@ -34,8 +35,8 @@ function Payment() {
 
   console.log("SECRET >>> ", clientSec)
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setProcessing(true);
 
     const payload = await stripe.confirmCardPayment(clientSec, {
@@ -43,17 +44,28 @@ function Payment() {
             card: elements.getElement(CardElement)
         }
     }).then(({ paymentIntent }) => {
+
+        db.collection('users').doc(user?.uid).collection('orders').doc(paymentIntent.id).set({
+            basket: basket,
+            amount: paymentIntent.amount,
+            created: paymentIntent.created,
+        })
+
         setSucceeded(true);
-        setError(null);
+        setErrors(null);
         setProcessing(false);
+
+        dispatch({
+            type:'EMPTY_BASKET',
+        })
 
         navigate('/orders', {replace: true});
     })
   }
 
-  const handleChange = (e) => {
-    setDisabled(e.empty);
-    setError(e.error ? e.error.message : "");
+  const handleChange = (event) => {
+    setDisabled(event.empty);
+    setErrors(event.error ? event.error.message : "");
   }
 
   return (
@@ -114,7 +126,7 @@ function Payment() {
                                     <span>{processing ? <p>Processing</p> : "Buy Now"}</span> 
                                 </button>
                             </div>
-                            {/* {error && <div>{error}</div>} */}
+                            {/* {errors && <div>{errors}</div>} */}
                         </form>
                 </div>
             </div>
